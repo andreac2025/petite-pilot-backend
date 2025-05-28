@@ -5,8 +5,9 @@ const router = express.Router();
 const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET,
-  process.env.REDIRECT_URI
+  process.env.REDIRECT_URI 
 );
+
 
 const SCOPES = ['https://www.googleapis.com/auth/calendar'];
 
@@ -22,8 +23,19 @@ router.get('/oauth2callback', async (req, res) => {
   const { code } = req.query;
   const { tokens } = await oauth2Client.getToken(code);
   oauth2Client.setCredentials(tokens);
-  res.json({ tokens });
+
+  // Store token globally so it's available later
+  global.oauthTokens = tokens;
+
+  res.send('✅ Authorization successful! You can close this tab.');
 });
+    // Re-authenticate with stored token
+    if (global.oauthTokens) {
+      oauth2Client.setCredentials(global.oauthTokens);
+    } else {
+      return res.status(401).json({ error: 'Unauthorized: No tokens found' });
+    }
+
 
 module.exports = router;
 router.post('/create-event', async (req, res) => {
