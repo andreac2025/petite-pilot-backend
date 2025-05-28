@@ -1,14 +1,10 @@
 {
   "name": "petite-pilot-backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
     "axios": "^1.9.0",
     "cors": "^2.8.5",
@@ -17,3 +13,4 @@
     "googleapis": "^149.0.0"
   }
 }
+
