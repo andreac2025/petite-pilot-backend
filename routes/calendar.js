@@ -29,17 +29,17 @@ router.get('/oauth2callback', async (req, res) => {
 
   res.send('✅ Authorization successful! You can close this tab.');
 });
-    // Re-authenticate with stored token
-    if (global.oauthTokens) {
-      oauth2Client.setCredentials(global.oauthTokens);
-    } else {
-      return res.status(401).json({ error: 'Unauthorized: No tokens found' });
-    }
-
 
 module.exports = router;
-router.post('/create-event', async (req, res) => {
-  try {
+router.post('/create-event', async (req, res) => {  
+ // Re-authenticate with stored token
+if (global.oauthTokens) {
+  oauth2Client.setCredentials(global.oauthTokens);
+} else {
+  return res.status(401).json({ error: 'Unauthorized: No tokens found' });
+}
+
+    try {
     const { title, description, location, startTime, endTime } = req.body;
 
     // You can log for debugging if needed
