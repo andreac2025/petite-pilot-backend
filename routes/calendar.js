@@ -62,10 +62,18 @@ if (global.oauthTokens) {
       }
     };
 
-    const response = await calendar.events.insert({
+        const response = await calendar.events.insert({
       calendarId: 'primary',
       resource: event
     });
+
+    res.status(200).json({ message: 'Event created successfully!' });
+  } catch (error) {
+    console.error('Error creating event:', error);
+    res.status(500).json({ error: 'Failed to create event' });
+  }
+});
+
 
  router.get('/get-events', async (req, res) => {
   if (!global.oauthTokens) {
@@ -92,6 +100,5 @@ if (global.oauthTokens) {
     res.status(500).json({ error: 'Failed to retrieve events' });
   }
 });
-
 
 module.exports = router;
