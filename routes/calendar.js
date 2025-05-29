@@ -1,3 +1,4 @@
+// Trigger redeploy for /get-events route
 const express = require('express');
 const { google } = require('googleapis');
 const router = express.Router();
@@ -30,7 +31,7 @@ router.get('/oauth2callback', async (req, res) => {
   res.send('✅ Authorization successful! You can close this tab.');
 });
 
-module.exports = router;
+
 router.post('/create-event', async (req, res) => {  
  // Re-authenticate with stored token
 if (global.oauthTokens) {
@@ -66,10 +67,31 @@ if (global.oauthTokens) {
       resource: event
     });
 
-    res.status(200).json({ message: 'Event created successfully', eventId: response.data.id });
+ router.get('/get-events', async (req, res) => {
+  if (!global.oauthTokens) {
+    return res.status(401).json({ error: 'Unauthorized: No tokens found' });
+  }
+
+  const { timeMin, timeMax } = req.query;
+
+  const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+  oauth2Client.setCredentials(global.oauthTokens);
+
+  try {
+    const response = await calendar.events.list({
+      calendarId: 'primary',
+      timeMin,
+      timeMax,
+      singleEvents: true,
+      orderBy: 'startTime',
+    });
+
+    res.json(response.data.items);
   } catch (error) {
-    console.error('Error creating event:', error);
-    res.status(500).json({ message: 'Failed to create event', error: error.message });
+    console.error('Error fetching events:', error);
+    res.status(500).json({ error: 'Failed to retrieve events' });
   }
 });
 
+
+module.exports = router;
