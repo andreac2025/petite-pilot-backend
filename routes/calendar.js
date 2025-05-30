@@ -13,12 +13,22 @@ const oauth2Client = new google.auth.OAuth2(
 // Load stored tokens from file if available
 const tokenPath = path.join(__dirname, '../tokens.json');
 
+let savedTokens;
+
 if (fs.existsSync(tokenPath)) {
   const tokenData = fs.readFileSync(tokenPath);
-  const savedTokens = JSON.parse(tokenData);
+  savedTokens = JSON.parse(tokenData);
+  console.log('📁 Loaded tokens from local file');
+} else if (process.env.RAILWAY_TOKENS) {
+  savedTokens = JSON.parse(process.env.RAILWAY_TOKENS);
+  console.log('☁️ Loaded tokens from Railway env var');
+}
+
+if (savedTokens) {
   oauth2Client.setCredentials(savedTokens);
   global.oauthTokens = savedTokens;
 }
+
 
 const SCOPES = ['https://www.googleapis.com/auth/calendar'];
 
@@ -26,9 +36,13 @@ router.get('/auth', (req, res) => {
   const url = oauth2Client.generateAuthUrl({
     access_type: 'offline',
     scope: SCOPES,
+    redirect_uri: process.env.REDIRECT_URI, // ✅ Keep this here
   });
-  res.json({ url });
+
+  res.json({ url }); // ✅ Now it's inside the route handler
 });
+
+
 
 router.get('/oauth2callback', async (req, res) => {
   const { code } = req.query;
@@ -36,20 +50,13 @@ router.get('/oauth2callback', async (req, res) => {
   oauth2Client.setCredentials(tokens);
   global.oauthTokens = tokens;
 
-  // ✅ Add this logging
-  console.log('🔑 Retrieved tokens:', tokens);
-
-  // ✅ Add safe write with error catch
-  try {
-    const tokenPath = path.join(__dirname, '../tokens.json');
-    fs.writeFileSync(tokenPath, JSON.stringify(tokens, null, 2));
-    console.log('✅ Tokens successfully written to tokens.json');
-  } catch (error) {
-    console.error('❌ Failed to write tokens to file:', error);
-  }
+  // 🔐 Print tokens to copy into Railway
+  console.log('🔐 Copy this token and store it in Railway as an env var:');
+  console.log(JSON.stringify(tokens));
 
   res.send('✅ Authorization successful! You can close this tab.');
 });
+
 
 
 
