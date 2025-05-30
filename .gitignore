@@ -1,0 +1,7 @@
+# Prevent sensitive tokens from being committed
+routes/tokens.json
+.env
+
+# Ignore node_modules directory
+node_modules/
+
