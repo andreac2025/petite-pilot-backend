@@ -8,8 +8,9 @@ app.use(cors());
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  res.json({ msg: '✅ Base backend is live' });
+  res.json({ msg: '✅ Base backend is running' });
 });
+
 
 
 app.get('/debug', (req, res) => {
