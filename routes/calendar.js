@@ -102,7 +102,7 @@ if (global.oauthTokens) {
     res.status(500).json({ error: 'Failed to create event' });
   }
 });
-
+console.log('💡 OAuth Tokens:', global.oauthTokens);
 // ✏️ Update an existing event by ID
 router.patch('/update-event', async (req, res) => {
   const { eventId, summary, description, start, end } = req.body;
@@ -239,4 +239,11 @@ router.get('/get-availability', async (req, res) => {
   }
 });
 
+// 🧪 Debug route to test if calendar routes are live
+router.get('/test', (req, res) => {
+  res.json({ message: '🎯 Calendar routes are working!' });
+});
+
 module.exports = router;
+
+
