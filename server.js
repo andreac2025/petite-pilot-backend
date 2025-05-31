@@ -10,7 +10,8 @@ app.use(express.json());
 const calendarRoutes = require('./routes/calendar');
 app.use('/', calendarRoutes); // don't change this to '/calendar'
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+
 
 // 🔁 Add this GET route
 app.get('/', (req, res) => {
