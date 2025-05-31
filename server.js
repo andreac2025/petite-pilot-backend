@@ -16,7 +16,8 @@ app.get('/debug', (req, res) => {
   res.json({ msg: '🛠️ Debug route is live!', port: PORT });
 });
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT;
+
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server running on port ${PORT}`);
