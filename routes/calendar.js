@@ -16,14 +16,11 @@ const tokenPath = path.join(__dirname, '../tokens.json');
 
 let savedTokens;
 
-if (fs.existsSync(tokenPath)) {
-  const tokenData = fs.readFileSync(tokenPath);
-  savedTokens = JSON.parse(tokenData);
-  console.log('📁 Loaded tokens from local file');
-} else if (process.env.RAILWAY_TOKENS) {
+if (process.env.RAILWAY_TOKENS) {
   savedTokens = JSON.parse(process.env.RAILWAY_TOKENS);
-  console.log('☁️ Loaded tokens from Railway env var');
+  console.log('🔐 Loaded tokens from Railway env var');
 }
+
 
 if (savedTokens) {
   oauth2Client.setCredentials(savedTokens);
@@ -244,6 +241,12 @@ router.get('/test', (req, res) => {
   res.json({ message: '🎯 Calendar routes are working!' });
 });
 
+// TEMP TEST ROUTE
+router.get('/test', (req, res) => {
+  res.send('📅 Calendar test route is working!');
+});
+
 module.exports = router;
+
 
 
