@@ -24,7 +24,7 @@ app.get('/', (req, res) => {
   res.send('🚀 The Petite Pilot backend is up and running!');
 });
 
-app.listen(PORT, HOST, () => {
+app.listen(PORT, () => {
   console.log(`🚀 Server running on http://${HOST}:${PORT}`);
 });
 
