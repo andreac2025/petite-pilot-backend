@@ -103,6 +103,35 @@ if (global.oauthTokens) {
   }
 });
 
+// ✏️ Update an existing event by ID
+router.patch('/update-event', async (req, res) => {
+  const { eventId, summary, description, start, end } = req.body;
+
+  if (!global.oauthTokens) {
+    return res.status(401).json({ error: 'Unauthorized: No tokens found' });
+  }
+
+  const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+  oauth2Client.setCredentials(global.oauthTokens);
+
+  try {
+    const response = await calendar.events.patch({
+      calendarId: 'primary',
+      eventId,
+      requestBody: {
+        summary,
+        description,
+        start: { dateTime: start },
+        end: { dateTime: end },
+      },
+    });
+
+    res.status(200).json({ message: '✅ Event updated successfully!', event: response.data });
+  } catch (error) {
+    console.error('❌ Error updating event:', error);
+    res.status(500).json({ error: 'Failed to update event' });
+  }
+});
 
  router.get('/get-events', async (req, res) => {
   if (!global.oauthTokens) {
