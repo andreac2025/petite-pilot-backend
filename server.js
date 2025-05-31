@@ -8,7 +8,9 @@ app.use(express.json());
 
 // Your route file
 const calendarRoutes = require('./routes/calendar');
-app.use('/', calendarRoutes); // don't change this to '/calendar'
+// NEW
+app.use('/calendar', calendarRoutes);
+ // don't change this to '/calendar'
 
 const PORT = process.env.PORT || 3000;
 
