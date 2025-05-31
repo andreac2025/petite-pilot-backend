@@ -16,10 +16,6 @@ const tokenPath = path.join(__dirname, '../tokens.json');
 
 let savedTokens;
 
-if (process.env.RAILWAY_TOKENS) {
-  savedTokens = JSON.parse(process.env.RAILWAY_TOKENS);
-  console.log('🔐 Loaded tokens from Railway env var');
-}
 
 
 if (savedTokens) {
