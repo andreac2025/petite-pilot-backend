@@ -8,8 +8,9 @@ app.use(cors());
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  res.send('✅ Base backend is running!');
+  res.json({ msg: '✅ Base backend is live' });
 });
+
 
 app.get('/debug', (req, res) => {
   res.json({ msg: '🛠️ Debug route is live!', port: PORT });
