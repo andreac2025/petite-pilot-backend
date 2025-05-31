@@ -17,7 +17,7 @@ app.use('/calendar', calendarRoutes);
  // don't change this to '/calendar'
 
 const PORT = process.env.PORT || 3000;
-const HOST = '0.0.0.0';
+
 
 // 🔁 Add this GET route
 app.get('/', (req, res) => {
@@ -25,7 +25,7 @@ app.get('/', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://${HOST}:${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
 
 
