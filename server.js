@@ -10,22 +10,18 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Your route file
+// 🔗 Register your route file HERE
 const calendarRoutes = require('./routes/calendar');
-// NEW
 app.use('/calendar', calendarRoutes);
- // don't change this to '/calendar'
+
+// ✅ Optional test to verify home route works
+app.get('/', (req, res) => {
+  res.send('✅ The Petite Pilot backend is up and running without /calendar for now!');
+});
 
 const PORT = process.env.PORT || 3000;
 
-
-// 🔁 Add this GET route
-app.get('/', (req, res) => {
-  res.send('🚀 The Petite Pilot backend is up and running!');
-});
-
 app.listen(PORT, () => {
-
   console.log(`🚀 Server running on port ${PORT}`);
 });
 
