@@ -1,4 +1,8 @@
 require('dotenv').config();
+if (process.env.OAUTH_TOKENS) {
+  global.oauthTokens = JSON.parse(process.env.OAUTH_TOKENS);
+}
+
 const express = require('express');
 const cors = require('cors');
 
@@ -13,15 +17,15 @@ app.use('/calendar', calendarRoutes);
  // don't change this to '/calendar'
 
 const PORT = process.env.PORT || 3000;
-
+const HOST = '0.0.0.0';
 
 // 🔁 Add this GET route
 app.get('/', (req, res) => {
   res.send('🚀 The Petite Pilot backend is up and running!');
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+app.listen(PORT, HOST, () => {
+  console.log(`🚀 Server running on http://${HOST}:${PORT}`);
 });
 
 
