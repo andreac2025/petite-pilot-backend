@@ -1,4 +1,5 @@
-// Trigger redeploy for /get-events route
+require('dotenv').config();
+
 const express = require('express');
 const { google } = require('googleapis');
 const router = express.Router();
