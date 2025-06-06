@@ -12,16 +12,16 @@ const oauth2Client = new google.auth.OAuth2(
   process.env.REDIRECT_URI 
 );
 // Load stored tokens from file if available
-const tokenPath = path.join(__dirname, '../tokens.json');
+// const tokenPath = path.join(__dirname, '../tokens.json');
 
-let savedTokens;
+// let savedTokens;
 
 
 
-if (savedTokens) {
-  oauth2Client.setCredentials(savedTokens);
-  global.oauthTokens = savedTokens;
-}
+// if (savedTokens) {
+//  oauth2Client.setCredentials(savedTokens);
+//  global.oauthTokens = savedTokens;
+//}
 
 
 const SCOPES = ['https://www.googleapis.com/auth/calendar'];
@@ -33,7 +33,7 @@ router.get('/auth', (req, res) => {
     redirect_uri: process.env.REDIRECT_URI, // ✅ Keep this here
   });
 
-  res.json({ url }); // ✅ Now it's inside the route handler
+  res.redirect({ url }); // ✅ Now it's inside the route handler
 });
 
 
