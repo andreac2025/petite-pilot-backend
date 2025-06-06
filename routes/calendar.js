@@ -28,7 +28,6 @@ const SCOPES = ['https://www.googleapis.com/auth/calendar'];
 
 router.get('/auth', (req, res) => {
   console.log('✅ GOOGLE_CLIENT_ID:', process.env.GOOGLE_CLIENT_ID);
-
   const url = oauth2Client.generateAuthUrl({
     access_type: 'offline',
     scope: SCOPES,
