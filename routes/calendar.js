@@ -30,7 +30,6 @@ router.get('/auth', (req, res) => {
   const url = oauth2Client.generateAuthUrl({
     access_type: 'offline',
     scope: SCOPES,
-    redirect_uri: process.env.REDIRECT_URI, // ✅ Keep this here
   });
 
   res.redirect(url);
