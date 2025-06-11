@@ -97,7 +97,7 @@ router.get('/list', async (req, res) => {
   console.log('📋 /list route hit');
 
   try {
-    // 👇 Set credentials using your refresh token
+    // Set credentials using your refresh token
     oauth2Client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
 
     const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
