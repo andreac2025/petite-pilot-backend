@@ -63,6 +63,28 @@ router.get('/oauth2callback', async (req, res) => {
 router.get('/test', (req, res) => {
   res.send('📅 Calendar test route is working!');
 });
+// GET upcoming events
+router.get('/events', async (req, res) => {
+  console.log('📅 /events route hit');  // 👈 Add this line here
+
+  try {
+    const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+
+    const response = await calendar.events.list({
+      calendarId: 'primary',
+      timeMin: new Date().toISOString(),
+      maxResults: 5,
+      singleEvents: true,
+      orderBy: 'startTime',
+    });
+
+    const events = response.data.items;
+    res.json(events);
+  } catch (error) {
+    console.error('❌ Error fetching events:', error);
+    res.status(500).json({ error: 'Failed to fetch events' });
+  }
+});
 
 module.exports = router;
 
