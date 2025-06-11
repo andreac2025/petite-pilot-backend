@@ -39,9 +39,10 @@ router.get('/auth', (req, res) => {
   });
 
   const url = oauth2Client.generateAuthUrl({
-    access_type: 'offline',
-    scope: SCOPES,
-  });
+  access_type: 'offline',
+  prompt: 'consent',
+  scope: SCOPES,
+});
 
   res.redirect(url);
 });
@@ -64,26 +65,26 @@ console.log(JSON.stringify(tokens));
 });
 
 // TEMP TEST ROUTE
-router.get('/test', (req, res) => {
-  res.send('📅 Calendar test route is working!');
-});
-// GET upcoming events
 router.get('/events', async (req, res) => {
   console.log('‼️ /events route hit');
 
   try {
-    // Add this line 👇 to set credentials before accessing the calendar
     oauth2Client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
 
     const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
 
+    // Get primary calendar dynamically
+    const calendarList = await calendar.calendarList.list();
+    const primaryCalendar = calendarList.data.items.find(cal => cal.primary);
+    const calendarId = 'andreace@amshantelle.com';
+
     const response = await calendar.events.list({
-      calendarId: 'primary',
-      timeMin: new Date().toISOString(),
-      maxResults: 5,
-      singleEvents: true,
-      orderBy: 'startTime',
-    });
+  calendarId: 'andreace@amshantelle.com',
+  timeMin: new Date().toISOString(),
+  maxResults: 5,
+  singleEvents: true,
+  orderBy: 'startTime',
+});
 
     const events = response.data.items;
     res.json(events);
