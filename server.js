@@ -7,8 +7,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const calendarRoutes = require('./routes/calendar'); // ✅ Add this
-app.use('/', calendarRoutes);                        // ✅ And this
+const calendarRoutes = require('./routes/calendar'); 
+app.use('/calendar', calendarRoutes); // <--- update this line
 
 app.get('/', (req, res) => {
   res.json({ msg: '✅ Base backend is running' });
