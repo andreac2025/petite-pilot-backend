@@ -32,7 +32,7 @@ if (process.env.REFRESH_TOKEN) {
 
 const SCOPES = ['https://www.googleapis.com/auth/calendar'];
 
-rrouter.get('/auth', (req, res) => {
+router.get('/auth', (req, res) => {
   console.log('🔍 ENV CHECK:', {
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     REDIRECT_URI: process.env.REDIRECT_URI,
