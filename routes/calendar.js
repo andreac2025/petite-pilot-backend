@@ -7,9 +7,9 @@ const fs = require('fs');
 const path = require('path');
 
 const oauth2Client = new google.auth.OAuth2(
-  process.env.GOOGLE_CLIENT_ID,
-  process.env.GOOGLE_CLIENT_SECRET,
-  process.env.REDIRECT_URI 
+  process.env.GOOGLE_CLIENT_ID.trim(),
+  process.env.GOOGLE_CLIENT_SECRET.trim(),
+  process.env.REDIRECT_URI.trim()
 );
 // Load stored tokens from file if available
 // const tokenPath = path.join(__dirname, '../tokens.json');
