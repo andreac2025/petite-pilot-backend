@@ -11,6 +11,12 @@ const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_SECRET.trim(),
   process.env.REDIRECT_URI.trim()
 );
+// Use stored refresh token
+if (process.env.REFRESH_TOKEN) {
+  oauth2Client.setCredentials({
+    refresh_token: process.env.REFRESH_TOKEN.trim()
+  });
+}
 // Load stored tokens from file if available
 // const tokenPath = path.join(__dirname, '../tokens.json');
 
@@ -41,6 +47,7 @@ router.get('/auth', (req, res) => {
 
 router.get('/oauth2callback', async (req, res) => {
   const { code } = req.query;
+  console.log('🔁 Received code from Google:', code);
   const { tokens } = await oauth2Client.getToken(code);
   oauth2Client.setCredentials(tokens);
   global.oauthTokens = tokens;
