@@ -32,15 +32,18 @@ if (process.env.REFRESH_TOKEN) {
 
 const SCOPES = ['https://www.googleapis.com/auth/calendar'];
 
-router.get('/auth', (req, res) => {
-  console.log('✅ GOOGLE_CLIENT_ID:', process.env.GOOGLE_CLIENT_ID);
+rrouter.get('/auth', (req, res) => {
+  console.log('🔍 ENV CHECK:', {
+    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+    REDIRECT_URI: process.env.REDIRECT_URI,
+  });
+
   const url = oauth2Client.generateAuthUrl({
     access_type: 'offline',
     scope: SCOPES,
   });
 
   res.redirect(url);
-; // ✅ Now it's inside the route handler
 });
 
 
@@ -49,8 +52,9 @@ router.get('/oauth2callback', async (req, res) => {
   const { code } = req.query;
   console.log('🔁 Received code from Google:', code);
   const { tokens } = await oauth2Client.getToken(code);
-  oauth2Client.setCredentials(tokens);
-  global.oauthTokens = tokens;
+  oauth2Client.setCredentials({
+  refresh_token: process.env.REFRESH_TOKEN
+});
 
  // 🧠 Copy this token and store it in Render as an env var
 console.log('🧠 Copy this token and store it in Render as an env var:');
@@ -65,9 +69,12 @@ router.get('/test', (req, res) => {
 });
 // GET upcoming events
 router.get('/events', async (req, res) => {
-  console.log('📅 /events route hit');  // 👈 Add this line here
+  console.log('‼️ /events route hit');
 
   try {
+    // Add this line 👇 to set credentials before accessing the calendar
+    oauth2Client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
+
     const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
 
     const response = await calendar.events.list({
@@ -81,24 +88,31 @@ router.get('/events', async (req, res) => {
     const events = response.data.items;
     res.json(events);
   } catch (error) {
-    console.error('❌ Error fetching events:', error);
+    console.error('❌ Error fetching events:', error.response?.data || error.message);
     res.status(500).json({ error: 'Failed to fetch events' });
   }
 });
+
 router.get('/list', async (req, res) => {
+  console.log('📋 /list route hit');
+
   try {
+    // 👇 Set credentials using your refresh token
+    oauth2Client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
+
     const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
 
     const response = await calendar.calendarList.list();
-    const calendars = response.data.items.map(cal => ({
+
+    const calendars = response.data.items.map((cal) => ({
       id: cal.id,
       summary: cal.summary,
-      primary: cal.primary || false
+      primary: cal.primary || false,
     }));
 
     res.json(calendars);
   } catch (error) {
-    console.error('❌ Error fetching calendar list:', error);
+    console.error('❌ Error fetching calendar list:', error.response?.data || error.message);
     res.status(500).json({ error: 'Failed to fetch calendar list' });
   }
 });
