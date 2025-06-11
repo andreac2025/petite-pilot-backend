@@ -85,6 +85,23 @@ router.get('/events', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch events' });
   }
 });
+router.get('/list', async (req, res) => {
+  try {
+    const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+
+    const response = await calendar.calendarList.list();
+    const calendars = response.data.items.map(cal => ({
+      id: cal.id,
+      summary: cal.summary,
+      primary: cal.primary || false
+    }));
+
+    res.json(calendars);
+  } catch (error) {
+    console.error('❌ Error fetching calendar list:', error);
+    res.status(500).json({ error: 'Failed to fetch calendar list' });
+  }
+});
 
 module.exports = router;
 
