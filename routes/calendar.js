@@ -52,9 +52,9 @@ router.get('/oauth2callback', async (req, res) => {
   oauth2Client.setCredentials(tokens);
   global.oauthTokens = tokens;
 
-  // 🔐 Print tokens to copy into Railway
-  console.log('🔐 Copy this token and store it in Railway as an env var:');
-  console.log(JSON.stringify(tokens));
+ // 🧠 Copy this token and store it in Render as an env var
+console.log('🧠 Copy this token and store it in Render as an env var:');
+console.log(JSON.stringify(tokens));
 
   res.send('✅ Authorization successful! You can close this tab.');
 });
