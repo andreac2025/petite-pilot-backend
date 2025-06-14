@@ -84,12 +84,12 @@ router.get('/events', async (req, res) => {
     console.log('👉 Using calendar ID:', calendarId);
 
     const response = await calendar.events.list({
-      calendarId,
-      timeMin: new Date('2025-06-01T00:00:00Z').toISOString(),
-      maxResults: 5,
-      singleEvents: true,
-      orderBy: 'startTime',
-    });
+  calendarId,
+  timeMin: new Date().toISOString(),
+  maxResults: 20,
+  singleEvents: true,
+  orderBy: 'startTime',
+});
 
     console.log('‼️ Events returned:', response.data.items.length);
     const events = response.data.items;
