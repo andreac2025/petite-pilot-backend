@@ -124,6 +124,38 @@ router.get('/list', async (req, res) => {
   }
 });
 
+router.get('/weekly-summary', async (req, res) => {
+  console.log('📆 /calendar/weekly-summary route hit');
+  try {
+    oauth2Client.setCredentials({
+      refresh_token: process.env.REFRESH_TOKEN,
+    });
+
+    const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+
+    const now = new Date();
+    const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay() + 1)); // Monday
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6); // Sunday
+
+    const response = await calendar.events.list({
+      calendarId: 'primary',
+      timeMin: startOfWeek.toISOString(),
+      timeMax: endOfWeek.toISOString(),
+      maxResults: 20,
+      singleEvents: true,
+      orderBy: 'startTime',
+    });
+
+    const events = response.data.items;
+    console.log(`📋 Weekly summary events returned: ${events.length}`);
+    res.json(events);
+  } catch (error) {
+    console.error('🚨 Error fetching weekly summary:', error.response?.data || error.message);
+    res.status(500).json({ error: 'Failed to fetch weekly summary' });
+  }
+});
+
 module.exports = router;
 
 
