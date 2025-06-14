@@ -8,6 +8,7 @@ app.use(cors());
 app.use(express.json());
 
 const calendarRoutes = require('./routes/calendar'); 
+console.log('✅ calendarRoutes loaded');
 app.use('/calendar', calendarRoutes); // <--- update this line
 
 app.get('/', (req, res) => {

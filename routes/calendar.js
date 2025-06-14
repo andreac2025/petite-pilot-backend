@@ -1,10 +1,15 @@
 require('dotenv').config();
-
 const express = require('express');
 const { google } = require('googleapis');
 const router = express.Router();
 const fs = require('fs');
 const path = require('path');
+
+// 🔁 Health check route
+router.get('/ping', (req, res) => {
+  console.log('👋🏽 Ping route hit');
+  res.send('pong');
+});
 
 const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID.trim(),
@@ -65,8 +70,9 @@ console.log(JSON.stringify(tokens));
 });
 
 // TEMP TEST ROUTE
-router.get('/calendar/events', async (req, res) => {
-  console.log('‼️ /calendar/events route hit');
+router.get('/events', async (req, res) => {
+  console.log('📍 /calendar/events route hit');
+
   try {
     oauth2Client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
     const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
@@ -85,8 +91,8 @@ router.get('/calendar/events', async (req, res) => {
       orderBy: 'startTime',
     });
 
+    console.log('‼️ Events returned:', response.data.items.length);
     const events = response.data.items;
-    console.log('‼️ Events returned:', events.length);
     res.json(events);
   } catch (error) {
     console.error('❌ Error fetching events:', error.response?.data || error.message);
