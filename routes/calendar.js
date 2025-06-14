@@ -65,28 +65,28 @@ console.log(JSON.stringify(tokens));
 });
 
 // TEMP TEST ROUTE
-router.get('/events', async (req, res) => {
-  console.log('‼️ /events route hit');
-
+router.get('/calendar/events', async (req, res) => {
+  console.log('‼️ /calendar/events route hit');
   try {
     oauth2Client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
-
     const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
 
-    // Get primary calendar dynamically
     const calendarList = await calendar.calendarList.list();
     const primaryCalendar = calendarList.data.items.find(cal => cal.primary);
-    const calendarId = 'andreace@amshantelle.com';
+    const calendarId = primaryCalendar.id;
+
+    console.log('👉 Using calendar ID:', calendarId);
 
     const response = await calendar.events.list({
-  calendarId: 'andreace@amshantelle.com',
-  timeMin: new Date().toISOString(),
-  maxResults: 5,
-  singleEvents: true,
-  orderBy: 'startTime',
-});
+      calendarId,
+      timeMin: new Date('2025-06-01T00:00:00Z').toISOString(),
+      maxResults: 5,
+      singleEvents: true,
+      orderBy: 'startTime',
+    });
 
     const events = response.data.items;
+    console.log('‼️ Events returned:', events.length);
     res.json(events);
   } catch (error) {
     console.error('❌ Error fetching events:', error.response?.data || error.message);
