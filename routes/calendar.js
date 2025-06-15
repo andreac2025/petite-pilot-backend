@@ -1,5 +1,22 @@
 require('dotenv').config();
 const express = require('express');
+function getAuthClient() {
+  const { google } = require('googleapis');
+  const oauth2Client = new google.auth.OAuth2(
+    process.env.GOOGLE_CLIENT_ID.trim(),
+    process.env.GOOGLE_CLIENT_SECRET.trim(),
+    process.env.REDIRECT_URI.trim()
+  );
+
+  if (process.env.REFRESH_TOKEN) {
+    oauth2Client.setCredentials({
+      refresh_token: process.env.REFRESH_TOKEN.trim(),
+    });
+  }
+
+  return oauth2Client;
+}
+
 const { google } = require('googleapis');
 const router = express.Router();
 const fs = require('fs');
@@ -11,17 +28,6 @@ router.get('/ping', (req, res) => {
   res.send('pong');
 });
 
-const oauth2Client = new google.auth.OAuth2(
-  process.env.GOOGLE_CLIENT_ID.trim(),
-  process.env.GOOGLE_CLIENT_SECRET.trim(),
-  process.env.REDIRECT_URI.trim()
-);
-// Use stored refresh token
-if (process.env.REFRESH_TOKEN) {
-  oauth2Client.setCredentials({
-    refresh_token: process.env.REFRESH_TOKEN.trim()
-  });
-}
 // Load stored tokens from file if available
 // const tokenPath = path.join(__dirname, '../tokens.json');
 
