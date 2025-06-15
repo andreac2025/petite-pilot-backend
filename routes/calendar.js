@@ -125,18 +125,20 @@ router.get('/list', async (req, res) => {
 });
 
 router.get('/weekly-summary', async (req, res) => {
-  console.log('📆 /calendar/weekly-summary route hit');
   try {
-    oauth2Client.setCredentials({
-      refresh_token: process.env.REFRESH_TOKEN,
-    });
-
-    const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+    const auth = await getAuthClient();
+    const calendar = google.calendar({ version: 'v3', auth });
 
     const now = new Date();
-    const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay() + 1)); // Monday
+    const dayOfWeek = now.getDay(); // 0 (Sun) - 6 (Sat)
+    const diffToMonday = (dayOfWeek + 6) % 7; // days to subtract to get to Monday
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - diffToMonday);
+    startOfWeek.setHours(0, 0, 0, 0);
+
     const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(startOfWeek.getDate() + 6); // Sunday
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    endOfWeek.setHours(23, 59, 59, 999);
 
     const response = await calendar.events.list({
       calendarId: 'primary',
@@ -148,13 +150,41 @@ router.get('/weekly-summary', async (req, res) => {
     });
 
     const events = response.data.items;
-    console.log(`📋 Weekly summary events returned: ${events.length}`);
-    res.json(events);
+
+    const formatDateRange = (start, end) => {
+      const options = { month: 'long', day: 'numeric' };
+      const startFormatted = start.toLocaleDateString('en-US', options);
+      const endFormatted = end.toLocaleDateString('en-US', { ...options, year: 'numeric' });
+      return `${startFormatted}–${endFormatted}`;
+    };
+
+    let summaryText = `Hey, Sis! I hope that you had a fantastic weekend! Here's your calendar at-a-glance for this week (${formatDateRange(startOfWeek, endOfWeek)}):\n\n`;
+
+    if (events.length === 0) {
+      summaryText += "Your calendar's clear, so block in some boss time or treat yourself. ✨";
+    } else {
+      events.forEach((event) => {
+        const start = event.start.dateTime || event.start.date;
+        const dateObj = new Date(start);
+        const formatted = dateObj.toLocaleString('en-US', {
+          weekday: 'short',
+          month: 'short',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: '2-digit',
+        });
+        summaryText += `• ${formatted} – ${event.summary}\n`;
+      });
+      summaryText += "\nStay on your bossy rhythm 💅🏽 You got this!";
+    }
+
+    res.json({ summary: summaryText });
   } catch (error) {
-    console.error('🚨 Error fetching weekly summary:', error.response?.data || error.message);
-    res.status(500).json({ error: 'Failed to fetch weekly summary' });
+    console.error('Error generating weekly summary:', error);
+    res.status(500).json({ error: 'Failed to generate weekly summary' });
   }
 });
+
 
 module.exports = router;
 
